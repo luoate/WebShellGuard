@@ -1,0 +1,120 @@
+.wave {
+  position: fixed;
+  height: 100%;
+  width: 80%;
+  left: 0;
+  bottom: 0;
+  z-index: -1;
+}
+
+.login-container {
+  width: 100vw;
+  height: 100vh;
+  max-width: 100%;
+  position: relative;
+  background: linear-gradient(to bottom right, #b3d9ff, #add8e6); /* 淡蓝色渐变 */
+}
+
+
+.img {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.img img {
+  width: 500px;
+}
+
+.login-box {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 8px 32px rgba(161, 196, 253, 0.2);
+  color: #444;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.login-box:hover {
+  transform: translate(-50%, -50%) scale(1.02);
+  box-shadow: 0 12px 40px rgba(33, 150, 243, 0.3); /* 蓝色阴影 */
+  border: 1px solid #2196f3;                      /* 可选：蓝色边框 */
+  border-radius: 12px;                            /* 可选：添加圆角 */
+  background-color: #e3f2fd;                      /* 可选：淡蓝背景 */
+}
+
+ 
+.login-form h2 {
+  color: #f8fafc;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.login-form {
+  width: 360px;
+}
+
+.avatar {
+  width: 350px;
+  height: 80px;
+}
+
+.login-form h2 {
+  text-transform: uppercase;
+  margin: 15px 0;
+  color: #999;
+  font:
+    bold 200% Consolas,
+    Monaco,
+    monospace;
+}
+
+@media screen and (max-width: 1180px) {
+  .login-container {
+    grid-gap: 9rem;
+  }
+
+  .login-form {
+    width: 290px;
+  }
+
+  .login-form h2 {
+    font-size: 2.4rem;
+    margin: 8px 0;
+  }
+
+  .img img {
+    width: 360px;
+  }
+
+  .avatar {
+    width: 280px;
+    height: 80px;
+  }
+}
+
+@media screen and (max-width: 968px) {
+  .wave {
+    display: none;
+  }
+
+  .img {
+    display: none;
+  }
+
+  .login-container {
+    grid-template-columns: 1fr;
+  }
+
+  .login-box {
+    justify-content: center;
+  }
+}

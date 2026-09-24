@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.conda/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Large model files (download separately)
+backend/model/
+backend/codebert/
+
+# Datasets and generated token sequences (several GB, not source code)
+backend/phpProcessor/dataset/
+backend/phpProcessor/files/
+
+# Java build output
+backend/phpProcessor/target/
+
+# Runtime uploads
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/upload/*
+backend/avatars/*
+!backend/avatars/.gitkeep
+
+# Logs and temp files
+*.log
+*.zip.bak
+*.bak
+66666666666666.json
+results.txt
+webshellresults.txt
+webshellDetectorResults.txt
+labels.json
+labels1.json
+label_dict.json
+tags.json
+tags.txt
+tags_test.json
+
+# Test outputs
+report/
+test/
+
+# Database
+*.db
+*.sqlite
+
+# Environments
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db

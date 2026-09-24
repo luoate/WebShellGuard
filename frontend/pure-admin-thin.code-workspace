@@ -1,0 +1,28 @@
+{
+	"folders": [
+		{
+			"name": "code",
+			"path": "../../Nutstore/1/文档/毕业设计/code"
+		},
+		{
+			"name": "pure-admin-thin",
+			"path": "."
+		},
+		{
+			"name": "vue-pure-admin",
+			"path": "../vue-pure-admin"
+		},
+		{
+			"name": "phpProcessor",
+			"path": "../../PycharmProjects/MSDetector-master/phpProcessor"
+		},
+		{
+			"name": "MSDetector-master",
+			"path": "../../PycharmProjects/MSDetector-master"
+		}
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "automatic",
+		"java.configuration.updateBuildConfiguration": "interactive"
+	}
+}
