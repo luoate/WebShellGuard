@@ -1,0 +1,37 @@
+# 后端依赖（版本对应 backend/README.md 里记录的实验环境）
+# GPU 版 PyTorch 请按 CUDA 版本从官方索引安装，例如 CUDA 11.0：
+#   pip install torch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+torch==1.7.1
+torchvision==0.8.2
+torchaudio==0.7.2
+transformers==4.0.1
+scikit-learn==0.24.1
+numpy==1.21.0
+
+# Web 服务
+flask
+flask-cors
+werkzeug
+requests
+
+# 数据与训练
+pandas
+tqdm
+seqeval
+jsonlines
+
+# 数据库
+pymysql
+
+# 文件特征提取：三者都需要系统级库支持，Linux/macOS 下分别用
+# libfuzzy-dev / libtlsh / libmagic，Windows 用对应的 wheel（python-magic-bin）
+ssdeep
+python-tlsh
+python-magic
+
+# YARA 规则匹配（yara*.py）
+yara-python
+
+# LLM 辅助分析（可选）
+openai
+dashscope

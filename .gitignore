@@ -11,6 +11,9 @@ ENV/
 *.egg-info/
 dist/
 build/
+# frontend/build/ holds vite.config.ts source, not build output
+!frontend/build/
+!frontend/build/**
 
 # IDE
 .idea/
@@ -53,8 +56,10 @@ tags.txt
 tags_test.json
 
 # Test outputs
-report/
-test/
+backend/report/
+backend/test/
+# Stale route copies: src/router/index.ts only globs ./modules/**/*.ts
+frontend/src/router/test/
 
 # Database
 *.db

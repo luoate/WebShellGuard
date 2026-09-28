@@ -44,8 +44,7 @@ conda activate WebShellGuard
 
 # 安装 Python 依赖
 pip install torch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2 cudatoolkit=11.0 -c pytorch
-pip install scikit-learn==0.24.1 transformers==4.0.1 flask flask-cors pymysql
-pip install numpy==1.21.0 pandas ssdeep py-tlsh python-magic-bin openai dashscope
+pip install -r requirements.txt   # 其余依赖及版本见该文件
 
 # 安装 PHP 解析器依赖 (JDK 11+)
 # 下载 antlr4-runtime 并配置
@@ -81,7 +80,7 @@ pnpm build
 |------|------|------|----------|
 | `backend/codebert/` | CodeBERT 权重与分词器 | 477MB | 从 HuggingFace 下载，见下 |
 | `backend/model/pre_train0.pth` | POS 预训练权重 | 476MB | 本地预训练生成 |
-| `backend/model/pre_train0_no_fc.pth` | 去掉 `fc` 层的预训练权重，微调的初始化文件 | 476MB | 由 `pre_train0.pth` 转换 |
+| `backend/model/pre_train_no_fc.pth` | 去掉 `fc` 层的预训练权重，微调的初始化文件 | 476MB | 由 `pre_train0.pth` 转换 |
 | `backend/model/train/*.pth` | 微调后的检测模型 | 每个 476MB | 本地训练生成 |
 | `backend/phpProcessor/files/` | PHP 原始样本 + 解析出的 token 序列 JSON | 2.2GB | 由 PHP 解析服务批量生成 |
 | `backend/phpProcessor/dataset/*.csv` | 训练用数据集 | 274MB | 由序列 JSON 汇总生成，或从界面上传 |
@@ -147,18 +146,12 @@ python generateLabels.py
 python pre_train_modify.py # 读 phpProcessor/files/sequence/pre_train.csv、pre_test.csv
 ```
 
-输出为 `model/pre_train{epoch}.pth`，其中 `pre_train0.pth` 是后续步骤的输入。`BERT_POS` 的 `fc` 输出维度是标签数，与分类器的 `fc(768→1)` 不兼容，需要在 `train_modify.py` 中放开保存行来导出去掉 `fc` 的版本：
+输出为 `model/pre_train{epoch}.pth`，其中 `pre_train0.pth` 是后续步骤的输入。`BERT_POS` 的 `fc` 输出维度是标签数，与分类器的 `fc(768→1)` 不兼容，需要在 `train_modify.py` 中放开保存行，导出加载了预训练权重、但 `fc` 仍为随机初始化的分类器权重，`router/train.py` 微调时会以文件名 `model/pre_train_no_fc.pth` 读取它：
 
 ```python
 # train_modify.py 约 240-246 行
 model = load_pretrained_model(model=model, checkpoint_path='model/pre_train0.pth', exclude_layers=['fc'])
 torch.save(model.state_dict(), 'model/pre_train_no_fc.pth')
-```
-
-注意 `router/train.py` 硬编码的初始化文件名为 `model/pre_train0_no_fc.pth`，与上面的默认输出名不同，需要重命名后再训练：
-
-```bash
-mv model/pre_train_no_fc.pth model/pre_train0_no_fc.pth
 ```
 
 不存在该文件时训练不会报错，只是跳过预训练权重加载（从零开始微调）。

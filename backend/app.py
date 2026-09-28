@@ -128,7 +128,7 @@ def model_evaluate_history():
     return Model.model_evaluate_history(request)
 @app.route('/model/evaluate/delete', methods=['GET'])
 def delete_evaluate():
-    return Model.delete_model(request)
+    return Model.delete_evaluate(request)
 @app.route('/model/deploy', methods=['GET'])
 def model_depoly():
     return Model.model_depoly(request, detector)
@@ -148,10 +148,5 @@ def delete_user():
     return User.delete_user(request)
 
 if __name__ == "__main__":
-    # local_path = "./codebert"
-    # tokenizer = RobertaTokenizer.from_pretrained("./codebert")
-    # codebert_model = RobertaModel.from_pretrained(local_path)
-    # print("成功从本地加载codebert模型！")
     detector = WebshellDetector()
-    # app.run(debug=True, port=11451, use_reloader=False)
     app.run(debug=True, port=11451)

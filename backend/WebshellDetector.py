@@ -1,17 +1,13 @@
 import ast
-import csv
-from typing import List
-from sklearn.metrics import accuracy_score
-import pandas
-import torch
-import torch.nn as nn
-from transformers import RobertaModel, RobertaTokenizer
 import json
 import os
-from model import BERTClassifier
-import pandas as pd
-import json
+
 import torch
+from sklearn.metrics import accuracy_score
+import pandas as pd
+from transformers import RobertaTokenizer
+
+from model import BERTClassifier
 from util.config import conf
 
 class WebshellDetector:
@@ -26,10 +22,6 @@ class WebshellDetector:
         self.tokenizer = tokenizer
         self.model = BERTClassifier().to(self.device)
         self.load_model(model_path)
-        # self.load_pretrained_model(
-        #     checkpoint_path=model_path,
-        #     exclude_layers=['fc']  # 排除所有包含 'fc' 的层
-        # )
 
     def load_model(self, model_path):
         """
@@ -37,56 +29,12 @@ class WebshellDetector:
         :param model_path: Path to the model weights file
         """
         try:
-            state_dict = torch.load(model_path)
+            state_dict = torch.load(model_path, map_location=self.device)
             self.model.load_state_dict(state_dict)
             print(f"Model loaded from {model_path}")
         except Exception as e:
             print(f"Error loading model: {e}")
             exit(1)
-
-    # def load_pretrained_model(
-    #         self,
-    #         checkpoint_path: str,
-    #         exclude_layers: List[str] = None
-    # ):
-    #     """
-    #     加载预训练模型的权重，并排除指定层的权重。
-    #
-    #     参数:
-    #         model (torch.nn.Module): 需要加载权重的模型实例。
-    #         checkpoint_path (str): 预训练模型权重的路径。
-    #         exclude_layers (List[str]): 需要排除的层名称（默认为空）。
-    #
-    #     返回:
-    #         torch.nn.Module: 加载了预训练权重的模型。
-    #     """
-    #     # 加载预训练模型的 checkpoint
-    #     checkpoint = torch.load(checkpoint_path, map_location=conf.device)
-    #
-    #     # 如果 checkpoint 是一个完整的训练状态，提取 model_state_dict
-    #     if 'model_state_dict' in checkpoint:
-    #         checkpoint = checkpoint['model_state_dict']
-    #
-    #     # 如果未指定排除层，则默认为空列表
-    #     if exclude_layers is None:
-    #         exclude_layers = []
-    #
-    #     # 过滤掉需要排除的层
-    #     pretrained_params = {
-    #         k: v for k, v in checkpoint.items()
-    #         if not any(exclude in k for exclude in exclude_layers)
-    #     }
-    #
-    #     # 获取当前模型的状态字典
-    #     model_state_dict = self.model.state_dict()
-    #
-    #     # 更新当前模型的状态字典
-    #     model_state_dict.update(pretrained_params)
-    #
-    #     # 加载更新后的状态字典
-    #     self.model.load_state_dict(model_state_dict)
-
-
 
     def predict(self, file_path = None, json_str = None, threshold=0.6):
         """
@@ -133,10 +81,6 @@ class WebshellDetector:
         except:
             print(f"Warning: Failed to parse JSON: {text[:50]}...")
             return default
-
-
-    # def predict_from_csv(self, file_path=None, threshold=0.6):
-
 
     def predict_from_csv(self, file_path=None, output_txt="websahellresults.txt", threshold=0.6):
         """
@@ -239,81 +183,6 @@ class WebshellDetector:
             print(f"读取 CSV 文件 {file_path} 时出错：{e}")
             return [], 0.0
 
-    # def predict_from_csv(self, csv_path, output_path="webshellresults.txt", threshold=0.6):
-    #     """
-    #     Predict if each sample in the CSV is a webshell and save results to a TXT file.
-    #     Uses pandas for CSV parsing.
-    #     :param csv_path: Path to the CSV file
-    #     :param output_path: Path to the output TXT file
-    #     :param threshold: Classification threshold
-    #     :return: None
-    #     """
-    #     results = []
-    #     correct = 0
-    #     total = 0
-
-    #     try:
-    #         df = pd.read_csv(csv_path)
-
-    #         for idx, row in df.iterrows():
-    #             try:
-    #                 token_seq = json.loads(row['tokenSequence']) if isinstance(row['tokenSequence'], str) else row['tokenSequence']
-    #                 string_seq = json.loads(row['stringSequence']) if isinstance(row['stringSequence'], str) else row['stringSequence']
-    #                 real_label = int(row['label'])
-
-    #                 data = token_seq + ["</s>"] + string_seq
-
-    #                 inputs = self.tokenizer.encode_plus(
-    #                     data,
-    #                     None,
-    #                     add_special_tokens=True,
-    #                     max_length=conf.seq_len,
-    #                     padding='max_length',
-    #                     return_token_type_ids=True,
-    #                     truncation=True,
-    #                 )
-
-    #                 ids = torch.tensor([inputs['input_ids']], dtype=torch.long).to(self.device)
-    #                 mask = torch.tensor([inputs['attention_mask']], dtype=torch.long).to(self.device)
-    #                 token_type_ids = torch.tensor([inputs["token_type_ids"]], dtype=torch.long).to(self.device)
-
-    #                 self.model.eval()
-    #                 with torch.no_grad():
-    #                     logits = self.model(ids, mask, token_type_ids)
-    #                     prob = torch.sigmoid(logits).item()
-    #                     is_webshell = int(prob > threshold)
-
-    #                     results.append((idx, is_webshell, prob, real_label))
-
-    #                     total += 1
-    #                     if is_webshell == real_label:
-    #                         correct += 1
-
-    #             except Exception as sample_err:
-    #                 print(f"[Sample {idx}] Error: {sample_err}")
-    #                 results.append((idx, None, None, row.get('label', 'unknown')))
-
-    #         # 写入结果到 TXT 文件
-    #         with open(output_path, 'w', encoding='utf-8') as f:
-    #             f.write("Index\tPredicted\tProbability\tRealLabel\n")
-    #             for idx, pred, prob, label in results:
-    #                 prob_str = f"{prob:.4f}" if prob is not None else "None"
-    #                 f.write(f"{idx}\t{pred}\t{prob_str}\t{label}\n")
-
-    #             # 统计信息
-    #             if total > 0:
-    #                 accuracy = correct / total
-    #                 f.write("\n")
-    #                 f.write(f"Total samples: {total}\n")
-    #                 f.write(f"Correct predictions: {correct}\n")
-    #                 f.write(f"Accuracy: {accuracy:.4f}\n")
-    #             else:
-    #                 f.write("\nNo valid samples to evaluate.\n")
-
-    #         print(f"Results and statistics saved to {output_path}")
-
-    #     except Exception as e:
-    #         print(f"Error reading CSV with pandas: {e}")
     def predict_directory(self, dir_path, threshold=0.5):
         """
         Predict if files in the directory are webshells.
@@ -342,9 +211,7 @@ class WebshellDetector:
                 print(f"Skipping {file_path} due to processing error.")
 
 if __name__ == "__main__":
-    # Initialize WebshellDetector
     model_path = 'model/train_3.pth'
-    # tokenizer = RobertaTokenizer.from_pretrained('./codebert')
     detector = WebshellDetector(model_path)
 
     # Specify the file or directory to predict
@@ -357,7 +224,7 @@ if __name__ == "__main__":
         print("Error: Please specify either a file or a directory, not both.")
     elif file_to_predict:
         # Predict a single file
-        is_webshell, probability = detector.predict(file_to_predict, threshold)
+        is_webshell, probability = detector.predict(file_path=file_to_predict, threshold=threshold)
         if is_webshell is not None:
             print(f"File: {file_to_predict}")
             print(f"Probability of being a webshell: {probability:.4f}")

@@ -29,6 +29,7 @@ class Train:
         model_name = model_params.get("modelName")  # 获取模型名称
         
         # 检查模型名称是否重复
+        connection = None
         try:
             connection = pymysql.connect(
                 host=host,
@@ -83,7 +84,7 @@ class Train:
         model = BERTClassifier().to(device)
 
         # 预训练权重
-        pretrain_path = "model/pre_train0_no_fc.pth"
+        pretrain_path = "model/pre_train_no_fc.pth"
         if os.path.exists(pretrain_path):
             model.load_state_dict(torch.load(pretrain_path, map_location=device))
             print(f"Loaded pretrained weights from {pretrain_path}")
@@ -123,7 +124,7 @@ class Train:
         })
 
     @staticmethod
-    def stop_training():
+    def stop_training(request):
         # 设置标志位，表示训练应中止
         with open('stop_flag.txt', "a") as f:
             f.write("STOP")

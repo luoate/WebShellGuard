@@ -13,12 +13,6 @@ class BERTClassifier(torch.nn.Module):
         self.drop = torch.nn.Dropout(0.1)
         self.fc = torch.nn.Linear(768, 1)
 
-    # def forward(self, ids, mask, token_type_ids):
-    #     o = self.transformer(ids, attention_mask=mask, token_type_ids=token_type_ids)
-    #     output_2 = self.drop(o['pooler_output'])
-    #     output_2 = output_2.view(-1, 768)
-    #     output = torch.sigmoid(self.fc(output_2))
-    #     return output
     def forward(self, ids, mask, token_type_ids):
         o = self.transformer(ids, attention_mask=mask, token_type_ids=token_type_ids)
         output_2 = self.drop(o['pooler_output'])
